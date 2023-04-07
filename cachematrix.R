@@ -1,7 +1,20 @@
-## Put comments here that give an overall description of what your
-## functions do
+## Caching of matrix inverse is achieved through two functions (1) makeCacheMatrix and 
+## (2) cacheSolve, which work together.
 
-## Converts matrix x into a "special matrix"
+## makeCacheMatrix function creates special function attributes for the matrix which
+## enable access to matrix data, and set and get matrix inverse value when called by 
+## cacheSolve. Lexical scoping and "<<-"super-assignment operator are used to modify 
+## initialized value of the matrix inverse.
+
+## cacheSolve function calculates the value of matrix inverse and uses the special
+## attributes to set inverse value the first time when cacheSolve is invoked. 
+## After the inverse value has been  set, it retrieves the stored inverse value 
+## each subsequent time cacheSolve is invoked.
+
+## Example of how to use:
+## a_matrix <- matrix(c(4,7,2,6), nrow=2, ncol=2, byrow=TRUE) ## a matrix
+## A <- makeCacheMatrix(a_matrix) ## transforms a matrix to makeCashMatrix object
+## cacheSolve(A) ## returns cached inverse of a_matrix
 
 makeCacheMatrix <- function(x = matrix()) {
         inv <- NULL
@@ -9,14 +22,11 @@ makeCacheMatrix <- function(x = matrix()) {
         setinv <- function(inverse) inv <<- inverse
         getinv <- function() inv
         list(get = get,setinv = setinv, getinv = getinv)
-
 }
 
-
-## Computes and sets inverse of matrix x first time, and 
-## looks up its value when called again
-
 cacheSolve <- function(x, ...) {
+# x is a makeCaseMatrix type object
+        
         inv <- x$getinv()
         if(!is.null(inv)) {
                 message("getting cached data")
@@ -27,4 +37,5 @@ cacheSolve <- function(x, ...) {
         x$setinv(inv)
         inv
 }
+
 
